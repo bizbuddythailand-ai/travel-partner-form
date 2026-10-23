@@ -117,12 +117,14 @@ select{font:inherit;color:var(--ink);background:var(--field);border:1px solid va
         </div>
         <input class="other" type="text" id="tour_types_other" name="tour_types_other" placeholder="ระบุประเภททัวร์อื่น ๆ" hidden>
         <div class="err"></div></div>
-      <div class="f" data-req="radio" data-name="groups_per_month"><span class="l">จำนวนกรุ๊ปที่ออกเดินทางต่อเดือน <span class="req">*</span></span>
+      <div class="f" data-req="radio" data-name="groups_per_month"><span class="l">จำนวนลูกค้าที่ออกเดินทางต่อเดือน <span class="req">*</span></span>
         <div class="chips">
-          <label class="chip"><input type="radio" name="groups_per_month" value="1-2"><span>1–2 กรุ๊ป</span></label>
-          <label class="chip"><input type="radio" name="groups_per_month" value="3-5"><span>3–5 กรุ๊ป</span></label>
-          <label class="chip"><input type="radio" name="groups_per_month" value="6-10"><span>6–10 กรุ๊ป</span></label>
-          <label class="chip"><input type="radio" name="groups_per_month" value="10+"><span>มากกว่า 10 กรุ๊ป</span></label>
+          <label class="chip"><input type="radio" name="groups_per_month" value="ต่ำกว่า 50"><span>ต่ำกว่า 50 คน</span></label>
+          <label class="chip"><input type="radio" name="groups_per_month" value="50-100"><span>50–100 คน</span></label>
+          <label class="chip"><input type="radio" name="groups_per_month" value="100-200"><span>100–200 คน</span></label>
+          <label class="chip"><input type="radio" name="groups_per_month" value="200-300"><span>200–300 คน</span></label>
+          <label class="chip"><input type="radio" name="groups_per_month" value="300-500"><span>300–500 คน</span></label>
+          <label class="chip"><input type="radio" name="groups_per_month" value="มากกว่า 500"><span>มากกว่า 500 คน</span></label>
         </div><div class="err"></div></div>
     </section>
 
@@ -222,7 +224,7 @@ function collect(){
   for (let i=1;i<=3;i++){ d['slot_'+i] = slotText(i); delete d['slot_'+i+'_date']; delete d['slot_'+i+'_time']; }
   // Pre-grade from the form (trip date, pax and night flight are confirmed on the call)
   const c1 = d.kit_status==='แจกอยู่' || d.kit_status==='ยังไม่แจก แต่กำลังมองหา';
-  const c2 = d.groups_per_month && d.groups_per_month!=='1-2';
+  const c2 = d.groups_per_month && d.groups_per_month!=='ต่ำกว่า 50';
   const c3 = /กรุ๊ปทัวร์ทั่วไป|Private group|Incentive tour|ดูงาน/.test(d.tour_types||'');
   d.lead_score = [c1,c2,c3].filter(Boolean).length;
   d.lead_grade = d.lead_score===3 ? 'A' : d.lead_score===2 ? 'B' : 'C';
