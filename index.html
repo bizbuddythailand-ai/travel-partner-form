@@ -61,7 +61,7 @@ button.go:disabled{opacity:.6;cursor:wait}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 .other{margin-top:4px}
 .slots{display:flex;flex-direction:column;gap:10px}
-.slot{display:grid;grid-template-columns:84px 1fr 1fr;gap:10px;align-items:center;background:var(--field);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.slot{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center;background:var(--field);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
 .slot .n{font-weight:600;font-size:14px;color:var(--accent)}
 .slot input[type=date],.slot select{background:#fff}
 select{font:inherit;color:var(--ink);background:var(--field);border:1px solid var(--line);border-radius:12px;padding:12px 14px;width:100%}
@@ -133,7 +133,7 @@ select{font:inherit;color:var(--ink);background:var(--field);border:1px solid va
       <div class="f" data-req="radio" data-name="kit_status"><span class="l">ตอนนี้แจก Amenity Kit หรือของแจกลูกทัวร์ไหม <span class="req">*</span></span>
         <div class="chips">
           <label class="chip"><input type="radio" name="kit_status" value="แจกอยู่"><span>แจกอยู่</span></label>
-          <label class="chip"><input type="radio" name="kit_status" value="ยังไม่แจก แต่กำลังมองหา"><span>ยังไม่แจก แต่กำลังมองหา</span></label>
+          <label class="chip"><input type="radio" name="kit_status" value="กำลังมองหา"><span>กำลังมองหา</span></label>
           <label class="chip"><input type="radio" name="kit_status" value="ยังไม่แจก"><span>ยังไม่แจก</span></label>
         </div><div class="err"></div></div>
       <div class="f" id="kit_items_box" data-name="kit_items" data-other="kit_items_other"><span class="l">ถ้าแจก แจกอะไรอยู่ <span class="req req-k" hidden>*</span> <span style="font-weight:400;color:var(--muted)">(เลือกได้หลายข้อ)</span></span>
@@ -158,7 +158,7 @@ select{font:inherit;color:var(--ink);background:var(--field);border:1px solid va
           <label class="chip"><input type="radio" name="aware_source" value="เพิ่งรู้จักครั้งแรก"><span>เพิ่งรู้จักครั้งแรก</span></label>
         </div><div class="err"></div></div>
       <div class="f" data-req="slots"><span class="l">สะดวกพูดคุยเรื่องการร่วมงานเป็น Partner ช่วงไหน <span class="req">*</span></span>
-        <p class="hint" style="margin:0">เลือก 3 ช่วงเวลา ช่วงละ 1 ชั่วโมง ทีมงานจะยืนยันกลับ 1 ช่วงทางโทรศัพท์หรืออีเมล</p>
+        <p class="hint" style="margin:0">เลือกวันและเวลาที่สะดวก (1 ชั่วโมง) ทีมงานจะยืนยันกลับทางโทรศัพท์หรืออีเมล</p>
         <div class="slots" id="slots"></div>
         <div class="err"></div></div>
       <div class="f" data-req="consent"><label class="consent"><input type="checkbox" id="consent" name="consent" value="ยินยอม"><span>ยินยอมให้ the buddy เก็บข้อมูลนี้เพื่อติดต่อกลับเรื่องโปรแกรม Tourism Partner</span></label><div class="err"></div></div>
@@ -173,7 +173,7 @@ select{font:inherit;color:var(--ink);background:var(--field);border:1px solid va
 
   <section class="card done" id="done" hidden>
     <h2>ได้รับใบสมัครแล้ว ขอบคุณครับ</h2>
-    <p style="margin:0;color:var(--muted)">ทีมงานจะยืนยันเวลานัดคุย 1 ช่วงจากที่คุณเลือก ภายใน 1 วันทำการ</p>
+    <p style="margin:0;color:var(--muted)">ทีมงานจะติดต่อกลับเพื่อยืนยันเวลานัดคุย</p>
     <div class="sum" id="sum"></div>
   </section>
 </div>
@@ -185,18 +185,17 @@ const form = document.getElementById('pf');
 const qs = new URLSearchParams(location.search);
 const TH_DAYS = ['อา.','จ.','อ.','พ.','พฤ.','ศ.','ส.'];
 
-// ---- meeting slots: 3 x (date + 1-hour window) ----
+// ---- meeting slot: 1 x (date + 1-hour window) ----
 function ymd(dt){ return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0'); }
 const today = new Date(), minD = new Date(today), maxD = new Date(today);
 minD.setDate(today.getDate()+1); maxD.setDate(today.getDate()+30);
 const HOURS = [9,10,11,13,14,15,16,17];
 const slotsEl = document.getElementById('slots');
-for (let i=1;i<=3;i++){
+for (let i=1;i<=1;i++){
   const row = document.createElement('div'); row.className='slot';
   const opts = HOURS.map(h=>{ const a=String(h).padStart(2,'0')+':00', b=String(h+1).padStart(2,'0')+':00'; return `<option value="${a}–${b}">${a}–${b} น.</option>`; }).join('');
-  row.innerHTML = `<span class="n">ช่วงที่ ${i}</span>
-    <input type="date" name="slot_${i}_date" aria-label="วันที่ ช่วงที่ ${i}" min="${ymd(minD)}" max="${ymd(maxD)}">
-    <select name="slot_${i}_time" aria-label="เวลา ช่วงที่ ${i}"><option value="">เลือกเวลา</option>${opts}</select>`;
+  row.innerHTML = `<input type="date" name="slot_${i}_date" aria-label="วันที่" min="${ymd(minD)}" max="${ymd(maxD)}">
+    <select name="slot_${i}_time" aria-label="เวลา"><option value="">เลือกเวลา</option>${opts}</select>`;
   slotsEl.appendChild(row);
 }
 function slotText(i){
@@ -221,9 +220,9 @@ function collect(){
   const fd = new FormData(form), d = {};
   for (const [k,v] of fd.entries()) d[k] = d[k] ? [].concat(d[k], v) : v;
   ['tour_types','kit_items'].forEach(k=>{ if(Array.isArray(d[k])) d[k]=d[k].join(', '); });
-  for (let i=1;i<=3;i++){ d['slot_'+i] = slotText(i); delete d['slot_'+i+'_date']; delete d['slot_'+i+'_time']; }
+  for (let i=1;i<=1;i++){ d['slot_'+i] = slotText(i); delete d['slot_'+i+'_date']; delete d['slot_'+i+'_time']; }
   // Pre-grade from the form (trip date, pax and night flight are confirmed on the call)
-  const c1 = d.kit_status==='แจกอยู่' || d.kit_status==='ยังไม่แจก แต่กำลังมองหา';
+  const c1 = d.kit_status==='แจกอยู่' || d.kit_status==='กำลังมองหา';
   const c2 = d.groups_per_month && d.groups_per_month!=='ต่ำกว่า 50';
   const c3 = /กรุ๊ปทัวร์ทั่วไป|Private group|Incentive tour|ดูงาน/.test(d.tour_types||'');
   d.lead_score = [c1,c2,c3].filter(Boolean).length;
@@ -247,11 +246,10 @@ function validate(scroll=true){
       if (ok && o && !o.hidden && o.value.trim().length < 2){ ok=false; msg='กรุณาระบุ “อื่น ๆ”'; }
     }
     if (t==='slots'){
-      const rows = [...slotsEl.children], vals = [1,2,3].map(slotText);
-      rows.forEach((r,i)=>r.classList.toggle('bad', !vals[i]));
-      const filled = vals.filter(Boolean);
-      ok = filled.length===3 && new Set(filled).size===3;
-      msg = filled.length<3 ? 'กรุณาเลือกวันและเวลาให้ครบ 3 ช่วง' : 'ช่วงเวลาซ้ำกัน กรุณาเลือกให้ต่างกัน';
+      const v = slotText(1);
+      slotsEl.firstElementChild.classList.toggle('bad', !v);
+      ok = !!v;
+      msg = 'กรุณาเลือกทั้งวันและเวลา';
     }
     if (t==='consent'){ ok = document.getElementById('consent').checked; msg='กรุณายืนยันการยินยอมก่อนส่ง'; }
     f.classList.toggle('bad', !ok);
@@ -276,7 +274,7 @@ form.addEventListener('submit', async e=>{
     document.getElementById('done').hidden = false;
     const s = document.getElementById('sum');
     s.innerHTML = '';
-    [['บริษัท',d.company],['ผู้ติดต่อ',d.full_name+' · '+d.phone],['ช่วงที่ 1',d.slot_1],['ช่วงที่ 2',d.slot_2],['ช่วงที่ 3',d.slot_3]].forEach(([k,v])=>{
+    [['บริษัท',d.company],['ผู้ติดต่อ',d.full_name+' · '+d.phone],['เวลานัดคุย',d.slot_1]].forEach(([k,v])=>{
       const p = document.createElement('div'); p.textContent = k + ': ' + (v||'-'); s.appendChild(p);
     });
     if (!ENDPOINT){ const p=document.createElement('div'); p.style.marginTop='8px'; p.style.color='var(--warn)'; p.textContent='โหมดตัวอย่าง: ยังไม่ได้เชื่อม Google Sheet ข้อมูลนี้ยังไม่ถูกบันทึก'; s.appendChild(p); }
